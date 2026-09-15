@@ -6,7 +6,7 @@ class TaskwarriorNotFound(TaskwarriorError):
     def __init__(self) -> None:
         super().__init__(
             "The 'task' command-line tool was not found on PATH. "
-            "Install Taskwarrior 2.6.x or 3.5.x "
+            "Install Taskwarrior 2.6 or newer "
             "(Debian/Ubuntu: apt install taskwarrior; Arch: pacman -S task)."
         )
 
