@@ -1,0 +1,61 @@
+name: tests
+
+on: [push, pull_request]
+
+jobs:
+  taskwarrior-2:
+    runs-on: ubuntu-latest
+    container: debian:bookworm
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.12", "3.13", "3.14"]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Taskwarrior 2.6.x
+        run: |
+          apt-get update -qq
+          apt-get install -y -qq taskwarrior curl ca-certificates
+          task --version
+      # uv rather than setup-python + pip: these bare distro containers ship a
+      # Python below the project's 3.12 floor, and their pip refuses to install
+      # into the system environment (PEP 668).
+      - name: Install uv
+        run: |
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+      - run: uv venv --python ${{ matrix.python-version }}
+      - run: uv pip install -e ".[server,dev]"
+      - run: .venv/bin/python -m pytest tests/ -v
+
+  taskwarrior-3:
+    runs-on: ubuntu-latest
+    container: archlinux:latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.12", "3.13", "3.14"]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Taskwarrior 3.5.x
+        run: |
+          pacman -Sy --noconfirm --quiet task curl
+          task --version
+      - name: Install uv
+        run: |
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+      - run: uv venv --python ${{ matrix.python-version }}
+      - run: uv pip install -e ".[server,dev]"
+      - run: .venv/bin/python -m pytest tests/ -v
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install ruff
+      - run: ruff check src tests
+      - run: ruff format --check src tests
