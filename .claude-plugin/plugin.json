@@ -1,0 +1,14 @@
+{
+  "name": "taskwarrior-mcp-lite",
+  "displayName": "Taskwarrior MCP Lite",
+  "version": "0.1.0",
+  "description": "Manage Taskwarrior tasks through 8 MCP tools, with usage guidance for safe destructive operations",
+  "author": {
+    "name": "German Calle",
+    "email": "german.callehuamani@gmail.com"
+  },
+  "homepage": "https://github.com/GermanCalle/taskwarrior-mcp-lite",
+  "repository": "https://github.com/GermanCalle/taskwarrior-mcp-lite",
+  "license": "MIT",
+  "keywords": ["taskwarrior", "mcp", "task-management", "productivity"]
+}

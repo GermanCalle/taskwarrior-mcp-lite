@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "taskwarrior": {
+      "type": "stdio",
+      "command": "uvx",
+      "args": ["--from", "taskwarrior-mcp-lite[server]", "taskwarrior-mcp-lite"]
+    }
+  }
+}

@@ -23,3 +23,7 @@ the `uuid` the destructive tools require.
 - If a call reports a missing `default.theme`, the user is on Taskwarrior 3.x
   without theme files: creating an empty `default.theme` next to their
   `.taskrc` fixes it.
+- Taskwarrior reads `~/.taskrc` by default. If a call reports that no
+  configuration file could be found, or the tasks returned are not the ones the
+  user expects, they can point the server at a specific one by setting `TASKRC`
+  in their MCP client configuration.

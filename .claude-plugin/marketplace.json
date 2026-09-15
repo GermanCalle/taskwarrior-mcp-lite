@@ -1,0 +1,24 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "taskwarrior-mcp-lite",
+  "description": "Taskwarrior task management for AI coding agents over MCP",
+  "owner": {
+    "name": "German Calle",
+    "email": "german.callehuamani@gmail.com"
+  },
+  "plugins": [
+    {
+      "name": "taskwarrior-mcp-lite",
+      "description": "Manage Taskwarrior tasks through 8 MCP tools, with usage guidance for safe destructive operations",
+      "version": "0.1.0",
+      "author": {
+        "name": "German Calle"
+      },
+      "source": "./",
+      "category": "productivity",
+      "homepage": "https://github.com/GermanCalle/taskwarrior-mcp-lite",
+      "license": "MIT",
+      "keywords": ["taskwarrior", "mcp", "task-management", "productivity"]
+    }
+  ]
+}
