@@ -7,6 +7,10 @@ directly, no MCP required.
 
 ## Install
 
+Taskwarrior itself is a prerequisite — this package drives the `task` binary and
+does not bundle it. Any release from 2.6 onwards works (`apt install taskwarrior`,
+`pacman -S task`, `brew install task`); see [Compatibility](#compatibility).
+
 To run the MCP server:
 
 ```bash
@@ -35,8 +39,14 @@ project. See [Using the core library directly](#using-the-core-library-directly)
 
 ## Compatibility
 
-Verified against Taskwarrior 2.6.x and 3.5.x on Python 3.12–3.14. Taskwarrior
-versions 3.0–3.4 are untested.
+The full test suite passes against Taskwarrior 2.6.2, 3.0.2, 3.1.0, 3.2.0,
+3.3.0, 3.4.2 and 3.5.0 — the latest patch of every minor release from 2.6
+onwards, each built from its official release tarball. This spans the 3.0
+switch from flat files to SQLite, which the library is unaffected by: it only
+ever talks to `task` over a subprocess and parses its JSON.
+
+That matrix was run on Python 3.12. CI covers Python 3.12–3.14 against
+Taskwarrior 2.6.x and 3.5.x.
 
 ### MCP SDK version
 
@@ -60,7 +70,6 @@ The core library is unaffected: it has no dependencies and never imports `mcp`.
 
 ### Taskwarrior 3.x and `default.theme`
 
-
 Taskwarrior 3.x aborts every command — including `export` — if it can't find
 a file named `default.theme`. It looks for that file relative to the
 process's current working directory, not the taskrc's directory, regardless
@@ -76,9 +85,25 @@ Could not find file in CWD, directory of config file or search paths 'default.th
 
 create an empty file named `default.theme` next to your `.taskrc`.
 
+## Using the Claude Code plugin
+
+This repository is also a Claude Code plugin, which registers the MCP server and
+installs a skill describing how to drive its tools. It ships its own marketplace
+manifest, so installing points Claude Code straight at this repository — there is
+no external registry in between:
+
+```
+/plugin marketplace add GermanCalle/taskwarrior-mcp-lite
+/plugin install taskwarrior-mcp-lite@taskwarrior-mcp-lite
+```
+
+The plugin launches the server through `uvx` from PyPI, so there is nothing to
+install by hand and no `claude mcp add` to run. It leaves `TASKRC` unset, which
+means Taskwarrior reads your own `~/.taskrc`.
+
 ## Using the MCP server
 
-Register it with your MCP client:
+For any other MCP client, register it directly:
 
 ```json
 {
@@ -91,6 +116,23 @@ Register it with your MCP client:
   }
 }
 ```
+
+That block is the same everywhere; only the file it goes in changes:
+
+| Client | File |
+|---|---|
+| Claude Desktop | `claude_desktop_config.json` (Settings → Developer → Edit Config) |
+| Cursor | `.cursor/mcp.json` in the project, or `~/.cursor/mcp.json` globally |
+| VS Code (Copilot) | `.vscode/mcp.json` in the project |
+| Claude Code (manual) | `.mcp.json` in the project, or `claude mcp add` for a user-wide server |
+
+Zed reads the same command under a `context_servers` key in its `settings.json`
+rather than `mcpServers`. Windsurf, Cline and other clients each have their own
+path, but all of them launch the server the same way: a stdio process started
+with that `command` and `args`.
+
+Setting `TASKRC` is optional. Left unset, Taskwarrior falls back to its own
+default of `~/.taskrc`.
 
 ### Tools
 
